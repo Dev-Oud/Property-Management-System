@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "user_tbl1")
+@Table(name = "user_tb1")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -47,18 +47,13 @@ public class User implements UserDetails {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-             .map(role -> new SimpleGrantedAuthority(role.getSpringRoleName()))
+                .map(role -> new SimpleGrantedAuthority(role.getSpringRoleName()))
 
                 .collect(Collectors.toList());
     }

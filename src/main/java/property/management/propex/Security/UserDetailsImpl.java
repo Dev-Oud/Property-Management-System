@@ -2,11 +2,12 @@ package property.management.propex.Security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import property.management.propex.Entity.User;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
@@ -15,7 +16,10 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return user.getRoles()
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getSpringRoleName()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -25,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();  
+        return user.getEmail();
     }
 
     @Override

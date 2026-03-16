@@ -31,6 +31,12 @@
 	</properties>
 
 <dependencies>
+
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+
     <!-- Your existing dependencies -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -60,6 +66,12 @@
         <scope>runtime</scope>
     </dependency>
     <dependency>
+    <groupId>com.bucket4j</groupId>
+    <artifactId>bucket4j-core</artifactId>
+    <version>8.10.1</version>
+    </dependency>
+    
+    <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <optional>true</optional>
@@ -74,8 +86,12 @@
         <artifactId>spring-security-test</artifactId>
         <scope>test</scope>
     </dependency>
+    <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+   </dependency>
 
-    <!-- ✅ JWT Dependencies -->
+   
     <dependency>
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-api</artifactId>
