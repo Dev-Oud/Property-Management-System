@@ -60,6 +60,7 @@ public class CompanyService {
 }
 
     public List<Company> myCompanies(Long ownerId) {
+        // In `myCompanies()`, you're fetching every single record matching the owner ID all at once. This works right now, but it going to eat up all your heap memory when the tables get big. You should refactor this to take a `Pageable` argument so you have actual pagenation.
         return companyRepository.findByOwnerId(ownerId);
     }
 
