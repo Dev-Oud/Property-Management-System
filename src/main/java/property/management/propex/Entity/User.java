@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
+// No database indexes here outside of the primary key and the email constraint. You should probably add an index on `userType` and `createdAt` since you likely be filtering/sorting by those a lot.
 @Table(name = "user_tb1")
 @Getter
 @Setter

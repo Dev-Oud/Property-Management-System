@@ -110,6 +110,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
+        // Why is CORS allowing `*` for origins? You should lock this down to your actual frontend domain. Also noticed `allowCredentials` set to false while origins is wildcard, which is a bit of a weird setup.
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));

@@ -24,6 +24,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private Bucket createNewBucket() {
 
+        // The Bucket4j rate limit is set to a flat 20 requests per minute for everything. That fine for normal endpoints, but you probably want a much stricter limit for the `/login` and `/register` endpoints specifically to stop brute-forcing.
         Bandwidth limit = Bandwidth.classic(
                 20, 
                 Refill.greedy(20, Duration.ofMinutes(1)) 

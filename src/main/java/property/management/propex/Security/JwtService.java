@@ -17,7 +17,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "6A576E5A7234753778217A25432A462D4A614E645267556B5870327335763879"; 
+    // Looks like you commited the postgres password and the JWT secret directly into the code. You really need to pull these out into env vars (like `${DB_PASSWORD}`) before this goes anywhere near production, otherwise they'll stuck in your git history forever.
+    private static final String SECRET_KEY = "6A576E5A7234753778217A25432A462D4A614E645267556B5870327335763879";
 
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {

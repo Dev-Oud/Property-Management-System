@@ -118,10 +118,9 @@ public class GlobalExceptionHandler {
 
     // ✅ 500 - Fallback
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGeneral(
-            Exception ex,
-            HttpServletRequest request) {
+    public ResponseEntity<Object> handleGeneral(Exception ex, HttpServletRequest request) {
 
+        // The generic `handleGeneral` exception handler returns a 500 message to the user, but it doesn't actually log the stack trace anywhere. It going to be a total nightmare to debug when things break in prod. Can you add `@Slf4j` and log the actual exception here? Same goes for the Service classes, they are completely silent right now.
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred",
                 request);
