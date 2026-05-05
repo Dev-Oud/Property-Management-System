@@ -15,7 +15,8 @@ public class CompanyResponse {
     private String registrationNumber;
     private String address;
     private CompanyStatus status;
-
     private OwnerResponse owner;
     private LocalDateTime createdAt;
+    private String rejectionReason;
+
 }

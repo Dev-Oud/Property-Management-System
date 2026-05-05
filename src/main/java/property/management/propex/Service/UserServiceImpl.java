@@ -32,16 +32,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
 
-        // ✅ Normalize email
+        
         String email = request.getEmail().trim().toLowerCase();
 
-        // ✅ Check duplicate email
         if (userRepository.findByEmail(email).isPresent()) {
             log.warn("Duplicate registration attempt for email: {}", email);
             throw new BadRequestException("Email already exists");
         }
 
-        // ✅ Convert String → Enum safely
         UserType userTypeEnum;
         try {
             userTypeEnum = UserType.valueOf(request.getUserType().trim().toUpperCase());
@@ -50,19 +48,18 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("Invalid user type");
         }
 
-        // ✅ Fetch role using enum
+        
         Role role = roleRepository.findByName(userTypeEnum)
                 .orElseThrow(() -> {
                     log.error("Role not found: {}", userTypeEnum);
                     return new ResourceNotFoundException("Role not found");
                 });
 
-        // ✅ Build user
         User user = User.builder()
                 .fullName(request.getFullName().trim())
                 .email(email)
                 .password(passwordEncoder.encode(request.getPassword()))
-                .userType(userTypeEnum) // if your User entity uses enum
+                .userType(userTypeEnum) 
                 .roles(Set.of(role))
                 .verified(false)
                 .walletBalance(0.0)

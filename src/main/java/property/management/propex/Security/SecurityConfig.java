@@ -33,7 +33,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final RateLimitFilter rateLimitFilter; 
+    private final RateLimitFilter rateLimitFilter;
     private final CustomUserDetailsService userDetailsService;
 
     @Bean
@@ -41,45 +41,37 @@ public class SecurityConfig {
 
         http
 
-            
             .csrf(csrf -> csrf.disable())
 
-           
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-           
             .headers(headers -> headers
-                    .contentSecurityPolicy(csp -> csp
-                            .policyDirectives("default-src 'self'"))
+                    .contentSecurityPolicy(csp ->
+                            csp.policyDirectives("default-src 'self'"))
                     .frameOptions(frame -> frame.deny())
-                    .xssProtection(xss -> xss.disable())
                     .contentTypeOptions(content -> {})
                     .httpStrictTransportSecurity(hsts -> hsts
                             .includeSubDomains(true)
                             .maxAgeInSeconds(31536000))
             )
 
-        
             .authorizeHttpRequests(auth -> auth
-
-                    
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/test/**").authenticated()
                     .requestMatchers("/api/companies/**").authenticated()
-
                     .anyRequest().authenticated()
             )
-
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             .authenticationProvider(authenticationProvider())
+
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
@@ -91,7 +83,6 @@ public class SecurityConfig {
         return authProvider;
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
             throws Exception {
@@ -99,7 +90,6 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-  
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -110,10 +100,22 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(false);
+
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:8081"
+        ));
+
+        configuration.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
+        ));
+
+        configuration.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type"
+        ));
+        configuration.setAllowCredentials(true);
+
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

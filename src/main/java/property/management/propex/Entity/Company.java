@@ -23,7 +23,7 @@ public class Company {
     private String companyName;
 
     @Column(nullable = false, unique = true)
-    private String registrationNumber; // CAC number
+    private String registrationNumber; 
 
     @Column(nullable = false)
     private String address;
@@ -33,6 +33,8 @@ public class Company {
 
     @Column(length = 500)
     private String rejectionReason;
+
+    
 
 
     @ManyToOne(fetch = FetchType.LAZY)
