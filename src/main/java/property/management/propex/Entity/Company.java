@@ -7,7 +7,11 @@ import property.management.propex.enums.CompanyStatus;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "companies")
+@Table(name = "companies", indexes = {
+        @Index(name = "idx_companies_owner_id", columnList = "owner_id"),
+        @Index(name = "idx_companies_status", columnList = "status"),
+        @Index(name = "idx_companies_owner_status", columnList = "owner_id,status")
+})
 @Getter
 @Setter
 @NoArgsConstructor

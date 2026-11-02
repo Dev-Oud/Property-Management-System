@@ -26,6 +26,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Value;
 
 @EnableMethodSecurity(prePostEnabled = true)
 @Configuration
@@ -35,6 +37,9 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final RateLimitFilter rateLimitFilter;
     private final CustomUserDetailsService userDetailsService;
+
+    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    private String allowedOrigins;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,6 +62,8 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                    .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                     .requestMatchers("/api/test/**").authenticated()
                     .requestMatchers("/api/companies/**").authenticated()
                     .anyRequest().authenticated()
@@ -101,9 +108,10 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
 
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:8081"
-        ));
+        configuration.setAllowedOrigins(Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toList());
 
         configuration.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"

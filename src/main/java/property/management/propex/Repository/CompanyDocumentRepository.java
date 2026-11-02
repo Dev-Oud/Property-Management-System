@@ -1,12 +1,12 @@
 package property.management.propex.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import property.management.propex.Entity.CompanyDocument;
-
-import java.util.List;
 
 public interface CompanyDocumentRepository
         extends JpaRepository<CompanyDocument, Long> {
 
-    List<CompanyDocument> findByCompanyId(Long companyId);
+    Page<CompanyDocument> findByCompanyId(Long companyId, Pageable pageable);
 }

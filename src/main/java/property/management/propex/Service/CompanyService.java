@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import property.management.propex.Entity.Company;
 import property.management.propex.Entity.User;
@@ -44,10 +45,12 @@ public class CompanyService {
         return mapToResponse(saved);
     }
 
+    @Transactional(readOnly = true)
     public Page<CompanyResponse> myCompanies(Long ownerId, Pageable pageable) {
         return companyRepository.findByOwnerId(ownerId, pageable)
                 .map(this::mapToResponse);
     }
+    @Transactional(readOnly = true)
     public Page<CompanyResponse> pendingCompanies(Pageable pageable) {
         return companyRepository.findByStatus(CompanyStatus.PENDING, pageable)
                 .map(this::mapToResponse);

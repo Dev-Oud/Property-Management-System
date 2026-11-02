@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
         String email = request.getEmail().trim().toLowerCase();
 
         if (userRepository.findByEmail(email).isPresent()) {
-            log.warn("Duplicate registration attempt for email: {}", email);
+            log.warn("Duplicate registration attempt");
             throw new BadRequestException("Email already exists");
         }
 
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        log.info("New user registered successfully: {}", email);
+        log.info("New user registered successfully");
 
         return AuthenticationResponse.builder()
                 .message("User registered successfully")

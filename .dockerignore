@@ -1,0 +1,8 @@
+.git
+.env
+target
+backups
+uploads
+.idea
+.vscode
+*.iml

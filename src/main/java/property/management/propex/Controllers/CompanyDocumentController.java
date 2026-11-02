@@ -8,6 +8,12 @@ import property.management.propex.Entity.User;
 import property.management.propex.Service.CompanyDocumentService;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import property.management.propex.Dto.CompanyDocumentResponse;
 
 @RestController
 @RequestMapping("/api/company-documents")
@@ -15,6 +21,16 @@ import java.io.IOException;
 public class CompanyDocumentController {
 
     private final CompanyDocumentService documentService;
+
+    @PreAuthorize("hasAnyRole('LANDLORD','AGENT','ADMIN')")
+    @GetMapping("/{companyId}")
+    public ResponseEntity<Page<CompanyDocumentResponse>> listDocuments(
+            @PathVariable Long companyId,
+            @PageableDefault(size = 20, sort = "uploadedAt", direction = Sort.Direction.DESC) Pageable pageable,
+            Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(documentService.getCompanyDocuments(companyId, pageable, user));
+    }
 
    
 @PreAuthorize("hasAnyRole('LANDLORD','AGENT')")

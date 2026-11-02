@@ -15,6 +15,9 @@ import property.management.propex.Exception.ResourceNotFoundException;
 import property.management.propex.Repository.CompanyDocumentRepository;
 import property.management.propex.Repository.CompanyRepository;
 import property.management.propex.enums.CompanyStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -77,7 +80,13 @@ public class CompanyDocumentService {
             Files.createDirectories(companyUploadPath);
 
         
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String extension = switch (contentType) {
+                case "application/pdf" -> ".pdf";
+                case "image/jpeg" -> ".jpg";
+                case "image/png" -> ".png";
+                default -> throw new BadRequestException("Unsupported file type");
+            };
+            String fileName = UUID.randomUUID() + extension;
             Path filePath = companyUploadPath.resolve(fileName);
 
             
@@ -102,18 +111,15 @@ public class CompanyDocumentService {
         }
     }
 
-    public List<CompanyDocumentResponse> getCompanyDocuments(Long companyId) {
-
-        if (!companyRepository.existsById(companyId)) {
-            throw new ResourceNotFoundException("Company not found");
+    @Transactional(readOnly = true)
+    public Page<CompanyDocumentResponse> getCompanyDocuments(Long companyId, Pageable pageable, User user) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
+        boolean isAdmin = user.getRoles().stream().anyMatch(role -> "ADMIN".equals(role.getName().name()));
+        if (!isAdmin && !company.getOwner().getId().equals(user.getId())) {
+            throw new ForbiddenException("You are not allowed to view documents for this company");
         }
-
-        List<CompanyDocument> documents =
-                documentRepository.findByCompanyId(companyId);
-
-        return documents.stream()
-                .map(this::mapToResponse)
-                .toList();
+        return documentRepository.findByCompanyId(companyId, pageable).map(this::mapToResponse);
     }
 
     public CompanyDocument getDocumentById(Long documentId) {

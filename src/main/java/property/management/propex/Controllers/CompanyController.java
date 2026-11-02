@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +40,8 @@ public class CompanyController {
 
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('LANDLORD','AGENT')")
-    public ResponseEntity<Page<CompanyResponse>> myCompanies(Pageable pageable) {
+    public ResponseEntity<Page<CompanyResponse>> myCompanies(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         User user = (User) SecurityContextHolder
                 .getContext()
@@ -52,7 +55,8 @@ public class CompanyController {
 
     @GetMapping("/pending")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<CompanyResponse>> pending(Pageable pageable) {
+    public ResponseEntity<Page<CompanyResponse>> pending(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         return ResponseEntity.ok(
                 companyService.pendingCompanies(pageable)

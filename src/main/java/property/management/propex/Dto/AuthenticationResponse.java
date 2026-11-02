@@ -14,5 +14,8 @@ import lombok.Setter;
 public class AuthenticationResponse {
     private String message;
     private boolean status;
-    private String token; 
+    private String token;
+    private String refreshToken;
+    private String tokenType;
+    private long expiresIn;
 }

@@ -30,9 +30,9 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
+    private final AuthSessionService authSessionService;
 
 
     @Transactional
@@ -41,7 +41,7 @@ public class AuthenticationService {
         String email = request.getEmail().trim().toLowerCase();
 
         if (userRepository.findByEmail(email).isPresent()) {
-            log.warn("Duplicate registration attempt: {}", email);
+            log.warn("Duplicate registration attempt");
             throw new BadRequestException("Email already exists");
         }
 
@@ -72,13 +72,9 @@ public class AuthenticationService {
 
         userRepository.save(user);
 
-        log.info("User registered successfully: {}", email);
+        log.info("User registered successfully");
 
-        String jwtToken = jwtService.generateToken(new UserDetailsImpl(user));
-
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return authSessionService.issue(user);
     }
 
   
@@ -94,27 +90,22 @@ public class AuthenticationService {
                     )
             );
         } catch (BadCredentialsException ex) {
-            log.warn("Invalid login attempt for email: {}", email);
+            log.warn("Invalid login attempt");
             throw new BadCredentialsException("Invalid email or password");
         }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
-                    log.error("User not found during login: {}", email);
+                    log.error("User not found during login");
                     return new ResourceNotFoundException("User not found");
                 });
 
         if (!user.isVerified()) {
-            log.warn("Unverified user attempted login: {}", email);
+            log.warn("Unverified user attempted login");
             throw new BadRequestException("Account not verified");
         }
 
-        String jwtToken = jwtService.generateToken(new UserDetailsImpl(user));
-
-        log.info("User logged in successfully: {}", email);
-
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        log.info("User logged in successfully");
+        return authSessionService.issue(user);
     }
 }

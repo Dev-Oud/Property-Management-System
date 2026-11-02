@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import io.sentry.Sentry;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -122,6 +123,7 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request) {
 
+        Sentry.captureException(ex);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred",
                 request);
